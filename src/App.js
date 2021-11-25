@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState} from "react"
 
 function App() {
+  const [amount, setAmount] = useState(1)
+  const [cards, setCards] = useState([])
+
+  async function fetchData(e) {
+    const requestOptions = {
+      method: "GET"
+    }
+    const data = await fetch(`https://deckofcardsapi.com/api/deck/ihx57swbij9m/draw/?count=${amount}`, requestOptions)
+    console.log(data)
+    const body = await data.json()
+    console.log(`body`, body)
+    setCards(body.cards)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input value={amount} onChange={e => setAmount(e.target.value)}/>
+      <button onClick={fetchData}>Fetch</button>
+      <div>
+        {cards.map(card => {
+          return <MyComponent src={card.image}/>
+        })}
+      </div>
     </div>
   );
 }
